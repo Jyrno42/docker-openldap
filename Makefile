@@ -1,10 +1,11 @@
-NAME = osixia/openldap
+NAME = thorgate/osixia-openldap
 VERSION = 1.3.0
 
 .PHONY: build build-nocache test tag-latest push push-latest release git-tag-version
 
 build:
-	docker build -t $(NAME):$(VERSION) --rm image
+	docker buildx build --platform linux/arm/v7,linux/amd64 -t $(NAME):$(VERSION) --push --rm image
+	docker buildx build --platform linux/arm/v7,linux/amd64 -t $(NAME):latest --push --rm image
 
 build-nocache:
 	docker build -t $(NAME):$(VERSION) --no-cache --rm image
@@ -24,7 +25,7 @@ push:
 push-latest:
 	docker push $(NAME):latest
 
-release: build test tag-latest push push-latest
+release: build tag-latest push push-latest
 
 git-tag-version: release
 	git tag -a v$(VERSION) -m "v$(VERSION)"

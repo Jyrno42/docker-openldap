@@ -67,6 +67,8 @@ LDAP_TLS_DH_PARAM_PATH="${CONTAINER_SERVICE_DIR}/slapd/assets/certs/$LDAP_TLS_DH
 # container first start
 if [ ! -e "$FIRST_START_DONE" ]; then
 
+  update-ca-certificates && cp /etc/ssl/certs/ca-certificates.crt ${CONTAINER_SERVICE_DIR}/slapd/assets/certs/ca-certificates.crt
+
   #
   # Helpers
   #
@@ -424,6 +426,7 @@ EOF
       done
 
       get_ldap_base_dn
+      sed -i "s|\$LDAP_REPLICATION_STARTTLS|$LDAP_REPLICATION_STARTTLS|g" ${CONTAINER_SERVICE_DIR}/slapd/assets/config/replication/replication-enable.ldif
       sed -i "s|\$LDAP_BASE_DN|$LDAP_BASE_DN|g" ${CONTAINER_SERVICE_DIR}/slapd/assets/config/replication/replication-enable.ldif
       sed -i "s|\$LDAP_ADMIN_PASSWORD|$LDAP_ADMIN_PASSWORD|g" ${CONTAINER_SERVICE_DIR}/slapd/assets/config/replication/replication-enable.ldif
       sed -i "s|\$LDAP_CONFIG_PASSWORD|$LDAP_CONFIG_PASSWORD|g" ${CONTAINER_SERVICE_DIR}/slapd/assets/config/replication/replication-enable.ldif
